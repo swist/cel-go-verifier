@@ -73,12 +73,19 @@ func (h *alphaHasher) hash(e ast.Expr, scope *alphaScope) {
 		h.hashConstant(v)
 		return
 	}
-	h.putString(exprKindNames[e.Kind()])
-	switch e.Kind() {
+	kind := e.Kind()
+	identName := ""
+	if kind == ast.IdentKind {
+		identName = e.AsIdent()
+	} else if n, ok := qualifiedIdent(h.a, e); ok {
+		kind, identName = ast.IdentKind, n
+	}
+	h.putString(exprKindNames[kind])
+	switch kind {
 	case ast.LiteralKind:
 		h.hashConstant(e.AsLiteral())
 	case ast.IdentKind:
-		name := e.AsIdent()
+		name := identName
 		if b := scopeIndex(scope, name); b >= 0 {
 			h.putByte(0)
 			h.putInt(int32(b))

@@ -120,6 +120,9 @@ func (t *astTranslator) translateExpr(e ast.Expr, a *ast.AST) tv {
 	case ast.IdentKind:
 		return t.translateIdent(e, a)
 	case ast.SelectKind:
+		if name, ok := qualifiedIdent(a, e); ok {
+			return t.translateNamedIdent(e, name, a)
+		}
 		return t.structs.translateSelect(e, a)
 	case ast.CallKind:
 		return t.translateCall(e, a)
@@ -160,11 +163,14 @@ func (t *astTranslator) translateConstant(e ast.Expr, v ref.Val) tv {
 }
 
 func (t *astTranslator) translateIdent(e ast.Expr, a *ast.AST) tv {
-	c, ts := t.c, t.ts
 	if v := referenceValue(a, e); v != nil {
 		return t.translateConstant(ast.NewExprFactory().NewLiteral(e.ID(), v), v)
 	}
-	name := e.AsIdent()
+	return t.translateNamedIdent(e, identName(a, e), a)
+}
+
+func (t *astTranslator) translateNamedIdent(e ast.Expr, name string, a *ast.AST) tv {
+	c, ts := t.c, t.ts
 	typ := exprType(a, e)
 	if typ.Kind() == types.TypeKind && len(typ.Parameters()) > 0 && typ.Parameters()[0].Kind() != types.DynKind {
 		return tv{ts.MkString(typ.Parameters()[0].TypeName()), e, c.MkFalse()}

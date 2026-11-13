@@ -25,8 +25,12 @@ func (ct *comprehensionTranslator) translate(e ast.Expr, a *ast.AST) tv {
 	c, ts := ct.c, ct.ts
 	comp := e.AsComprehension()
 	rangeExpr := comp.IterRange()
+	rangeName, isIdent := qualifiedIdent(a, rangeExpr)
 	if rangeExpr.Kind() == ast.IdentKind {
-		if v, ok := ct.x.lookupSymbol(rangeExpr.AsIdent()); ok && v.expr != nil {
+		rangeName, isIdent = rangeExpr.AsIdent(), true
+	}
+	if isIdent {
+		if v, ok := ct.x.lookupSymbol(rangeName); ok && v.expr != nil {
 			rangeExpr = v.expr
 		}
 	}

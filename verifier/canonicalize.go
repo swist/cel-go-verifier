@@ -69,7 +69,13 @@ type ccomp struct {
 	iterRange, accuInit, cond, step, result *cnode
 }
 
-func fromAST(e ast.Expr) *cnode {
+func fromAST(e ast.Expr) *cnode { return fromCheckedAST(nil, e) }
+
+func fromCheckedAST(a *ast.AST, e ast.Expr) *cnode {
+	if name, ok := qualifiedIdent(a, e); ok {
+		return &cnode{kind: ast.IdentKind, id: e.ID(), ident: name}
+	}
+	fromAST := func(e ast.Expr) *cnode { return fromCheckedAST(a, e) }
 	n := &cnode{kind: e.Kind(), id: e.ID()}
 	switch e.Kind() {
 	case ast.LiteralKind:
@@ -816,7 +822,7 @@ func Canonicalize(env *cel.Env, a *cel.Ast) (*cel.Ast, error) {
 			macros[id] = m.AsCall().FunctionName()
 		}
 	}
-	root, err := canonicalizeExpr(fromAST(native.Expr()), macros)
+	root, err := canonicalizeExpr(fromCheckedAST(native, native.Expr()), macros)
 	if err != nil {
 		return nil, err
 	}

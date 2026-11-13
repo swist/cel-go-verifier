@@ -178,3 +178,28 @@ func exprType(a *ast.AST, e ast.Expr) *types.Type {
 	}
 	return types.DynType
 }
+
+// qualifiedIdent returns the name a select chain resolves to, if the checker
+// resolved it as a qualified identifier (e.g. variables.foo). cel-java's
+// checker rewrites such chains to identifiers; cel-go records the name in the
+// reference map instead.
+func qualifiedIdent(a *ast.AST, e ast.Expr) (string, bool) {
+	if a == nil || e.Kind() != ast.SelectKind || e.AsSelect().IsTestOnly() {
+		return "", false
+	}
+	r, ok := a.ReferenceMap()[e.ID()]
+	if !ok || r == nil || r.Name == "" || len(r.OverloadIDs) > 0 {
+		return "", false
+	}
+	return r.Name, true
+}
+
+// identName returns the resolved name of an identifier.
+func identName(a *ast.AST, e ast.Expr) string {
+	if a != nil {
+		if r, ok := a.ReferenceMap()[e.ID()]; ok && r != nil && r.Name != "" && len(r.OverloadIDs) == 0 {
+			return r.Name
+		}
+	}
+	return e.AsIdent()
+}
