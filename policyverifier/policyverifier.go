@@ -161,7 +161,7 @@ func Parse(src, location string, opts ...policy.ParserOption) (*policy.Policy, e
 	}
 	p, iss := parser.Parse(policy.StringSource(src, location))
 	if iss.Err() != nil {
-		return nil, iss.Err()
+		return nil, &PolicyError{iss.Err().Error()}
 	}
 	return p, nil
 }
@@ -200,7 +200,7 @@ func New(env *cel.Env, v *verifier.Verifier, opts ...Option) *Verifier {
 func (pv *Verifier) Compile(p *policy.Policy) (*cel.Ast, error) {
 	a, iss := policy.Compile(pv.env, p, pv.compiler...)
 	if iss.Err() != nil {
-		return nil, iss.Err()
+		return nil, &PolicyError{iss.Err().Error()}
 	}
 	if pv.optimize != nil {
 		return pv.optimize(pv.env, a)
@@ -240,7 +240,7 @@ func (pv *Verifier) VerifyInvariants(p *policy.Policy) ([]InvariantResult, error
 func (pv *Verifier) VerifyInvariantsOf(p *policy.Policy, ver *Verification) ([]InvariantResult, error) {
 	rule, iss := policy.CompileRule(pv.env, p, pv.compiler...)
 	if iss.Err() != nil {
-		return nil, iss.Err()
+		return nil, &PolicyError{iss.Err().Error()}
 	}
 	composer, err := policy.NewRuleComposer(pv.env)
 	if err != nil {
@@ -248,7 +248,7 @@ func (pv *Verifier) VerifyInvariantsOf(p *policy.Policy, ver *Verification) ([]I
 	}
 	composed, iss := composer.Compose(rule)
 	if iss.Err() != nil {
-		return nil, iss.Err()
+		return nil, &PolicyError{iss.Err().Error()}
 	}
 	var bound []verifier.BoundSymbol
 	var decls []cel.EnvOption
@@ -292,6 +292,11 @@ func (pv *Verifier) VerifyInvariantsOf(p *policy.Policy, ver *Verification) ([]I
 	}
 	return out, nil
 }
+
+// PolicyError reports a policy that doesn't parse, compile or compose.
+type PolicyError struct{ msg string }
+
+func (e *PolicyError) Error() string { return e.msg }
 
 // ValidationError reports an invalid expression in a verification section.
 type ValidationError struct{ msg string }
