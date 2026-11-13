@@ -58,9 +58,9 @@ var firstElemMacro = parser.NewReceiverMacro("first_elem", 0,
 	func(eh parser.ExprHelper, target ast.Expr, args []ast.Expr) (ast.Expr, *common.Error) {
 		return eh.NewComprehension(target, "x", "accu",
 			eh.NewLiteral(types.Int(-1)),
-			eh.NewCall(operators.Equals, eh.NewAccuIdent(), eh.NewLiteral(types.Int(-1))),
+			eh.NewCall(operators.Equals, eh.NewIdent("accu"), eh.NewLiteral(types.Int(-1))),
 			eh.NewIdent("x"),
-			eh.NewAccuIdent()), nil
+			eh.NewIdent("accu")), nil
 	})
 
 var (
@@ -185,9 +185,10 @@ func (g *goldenRun) verifier(opts ...verifier.Option) *verifier.Verifier {
 // knownDivergences are the cases whose transcripts differ from cel-java's
 // because cel-go's environment differs, not because the verifier does.
 var knownDivergences = map[string]string{
-	z3 + "isSatisfiable_failure[DYN_OPTIONAL_VALUE_OUT_OF_RANGE]":                      "cel-go's checker types dyn_var.value() as int and resolves `< 0u` to less_int64_uint64 only",
-	z3 + "isAlwaysTrue_success[TYPE_AXIOM_OPTIONAL]":                                   "cel-go's checker types the optional_type identifier as type(optional_type(dyn)), cel-java as type(optional_type(int))",
-	z3 + "isAlwaysTrue_violation_returnsFalse[UNINTERPRETED_CONVERSION_CAN_ERROR_INT]": "cel-go's stdlib has int(duration), which cel-java's lacks",
+	z3 + "isSatisfiable_failure[DYN_OPTIONAL_VALUE_OUT_OF_RANGE]":                                            "cel-go's checker types dyn_var.value() as int and resolves `< 0u` to less_int64_uint64 only",
+	z3 + "isAlwaysTrue_success[TYPE_AXIOM_OPTIONAL]":                                                         "cel-go's checker types the optional_type identifier as type(optional_type(dyn)), cel-java as type(optional_type(int))",
+	z3 + "isAlwaysTrue_violation_returnsFalse[UNINTERPRETED_CONVERSION_CAN_ERROR_INT]":                       "cel-go's stdlib has int(duration), which cel-java's lacks",
+	z3 + "isSatisfiable_approximate_listsApproximationSources[APPROXIMATE_FUNCTION_OF_APPROXIMATE_ARGUMENT]": "cel-go's stdlib has int(duration), which cel-java's lacks",
 }
 
 // procDivergences differ only with the z3 process backend: Z3's simplifier

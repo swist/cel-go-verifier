@@ -22,9 +22,17 @@ func javaDoubleString(v float64) string {
 	}
 	// Shortest decimal that round-trips: digits d1.d2d3... x 10^exp.
 	e := strconv.FormatFloat(v, 'e', -1, 64)
+	if !strings.Contains(e, ".") {
+		// Java renders at least two significant digits, choosing the closest such decimal
+		// (e.g. 4.9E-324 rather than 5.0E-324).
+		e = strconv.FormatFloat(v, 'e', 1, 64)
+	}
 	mant, expStr, _ := strings.Cut(e, "e")
 	exp, _ := strconv.Atoi(expStr)
-	digits := strings.Replace(mant, ".", "", 1)
+	digits := strings.TrimRight(strings.Replace(mant, ".", "", 1), "0")
+	if digits == "" {
+		digits = "0"
+	}
 	var s string
 	if v >= 1e-3 && v < 1e7 {
 		// Plain notation with at least one digit after the point.

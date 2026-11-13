@@ -45,8 +45,8 @@ type zctx struct {
 	sorts  map[*smt.Sort]C.Z3_sort
 	decls  map[*smt.FuncDecl]C.Z3_func_decl
 	terms  map[*smt.Term]C.Z3_ast
-	values map[string]C.Z3_ast        // model values by name
-	ops    map[string]C.Z3_func_decl  // builtin declarations seen in Z3's output, by name and arity
+	values map[string]C.Z3_ast       // model values by name
+	ops    map[string]C.Z3_func_decl // builtin declarations seen in Z3's output, by name and arity
 	rms    map[smt.RoundingMode]C.Z3_ast
 }
 

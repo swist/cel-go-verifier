@@ -188,7 +188,7 @@ func New(env *cel.Env, opts ...Option) (*Verifier, error) {
 
 type emptyTypeProvider struct{}
 
-func (emptyTypeProvider) StructTypeNames() []string                    { return nil }
+func (emptyTypeProvider) StructTypeNames() []string                  { return nil }
 func (emptyTypeProvider) FieldType(string, string) (FieldInfo, bool) { return FieldInfo{}, false }
 
 // query is the state of one verification query.

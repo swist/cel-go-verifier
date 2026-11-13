@@ -138,8 +138,12 @@ func (g *counterexampleGenerator) extractValue(t *smt.Term) cxValue {
 			return inexactValue(`duration("` + secs.String() + `s")`)
 		}
 		s, n := secs.Int64(), rem.Int64()
-		return exactValue(types.Duration{Duration: time.Duration(s)*time.Second + time.Duration(n)},
-			`duration("`+formatDuration(s, n)+`")`)
+		display := `duration("` + formatDuration(s, n) + `")`
+		// cel-go durations are time.Durations, which cover about ±292 years of CEL's ±10000.
+		if s > math.MaxInt64/NanosPerSecond-1 || s < math.MinInt64/NanosPerSecond+1 {
+			return inexactValue(display)
+		}
+		return exactValue(types.Duration{Duration: time.Duration(s)*time.Second + time.Duration(n)}, display)
 	case ts.listCons:
 		return g.extractList(args[0])
 	case ts.mapCons:
@@ -180,8 +184,28 @@ func inRange(v *big.Int, lo, hi int64) bool {
 	return v.Cmp(big.NewInt(lo)) >= 0 && v.Cmp(big.NewInt(hi)) <= 0
 }
 
+// stringRunes returns the code points of a string value, which models may
+// spell as a literal or as a concatenation of units of characters.
+func stringRunes(t *smt.Term) []rune {
+	switch t.Op {
+	case smt.OpStrLit:
+		return t.Runes
+	case smt.OpCharLit:
+		return []rune{rune(t.Int.Int64())}
+	case smt.OpSeqUnit:
+		return stringRunes(t.Args[0])
+	case smt.OpSeqConcat:
+		var out []rune
+		for _, a := range t.Args {
+			out = append(out, stringRunes(a)...)
+		}
+		return out
+	}
+	return nil
+}
+
 func extractString(t *smt.Term, isBytes bool) cxValue {
-	runes := t.Runes
+	runes := stringRunes(t)
 	exact := true
 	for _, r := range runes {
 		if isBytes && r >= 0x80 || !isBytes && r >= 0xD800 && r <= 0xDFFF {
@@ -321,7 +345,7 @@ func joinShown(prefix string, shown []string, length int64, noun, suffix string)
 func (g *counterexampleGenerator) extractMessage(ref *smt.Term) cxValue {
 	c, ts := g.c, g.ts
 	presence := g.eval(ts.GetMsgPresence(ref))
-	typeName := g.eval(ts.GetMsgTypeName(ref)).StringValue()
+	typeName := string(stringRunes(g.eval(ts.GetMsgTypeName(ref))))
 	var keys []*smt.Term
 	seen := map[*smt.Term]bool{}
 	for t := presence; t.IsApp() && t.Op == smt.OpStore; t = t.Args[0] {
@@ -334,7 +358,7 @@ func (g *counterexampleGenerator) extractMessage(ref *smt.Term) cxValue {
 	for _, k := range keys {
 		if g.eval(c.MkSelect(ts.GetMsgPresence(ref), k)).IsTrue() {
 			v := g.eval(c.MkSelect(ts.GetMsgValues(ref), k))
-			entries = append(entries, k.StringValue()+": "+g.extract(v).display)
+			entries = append(entries, string(stringRunes(k))+": "+g.extract(v).display)
 		}
 	}
 	return inexactValue(typeName + "{" + strings.Join(entries, ", ") + "}")
