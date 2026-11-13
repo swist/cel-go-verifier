@@ -355,10 +355,20 @@ func (g *counterexampleGenerator) extractMessage(ref *smt.Term) cxValue {
 		}
 	}
 	var entries []string
+	fields := map[string]MessageField{}
 	for _, k := range keys {
 		if g.eval(c.MkSelect(ts.GetMsgPresence(ref), k)).IsTrue() {
-			v := g.eval(c.MkSelect(ts.GetMsgValues(ref), k))
-			entries = append(entries, string(stringRunes(k))+": "+g.extract(v).display)
+			v := g.extract(g.eval(c.MkSelect(ts.GetMsgValues(ref), k)))
+			entries = append(entries, string(stringRunes(k))+": "+v.display)
+			fields[string(stringRunes(k))] = MessageField{v.val, v.display}
+		}
+	}
+	if f, ok := ts.formatters[typeName]; ok {
+		if val, display, ok := f(fields); ok {
+			if val != nil {
+				return exactValue(val, display)
+			}
+			return inexactValue(display)
 		}
 	}
 	return inexactValue(typeName + "{" + strings.Join(entries, ", ") + "}")

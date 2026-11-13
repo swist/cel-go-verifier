@@ -97,7 +97,17 @@ func (g *typeConstraintGenerator) forType(v *smt.Term, t *types.Type) *smt.Term 
 		}
 		return MkAndFlattened(c, parts...)
 	case t.Kind() == types.StructKind:
-		return c.MkAnd(ts.IsMessage(v), c.MkEq(ts.GetMsgTypeName(ts.GetMessageRef(v)), MkZ3String(c, t.TypeName())))
+		k := c.MkAnd(ts.IsMessage(v), c.MkEq(ts.GetMsgTypeName(ts.GetMessageRef(v)), MkZ3String(c, t.TypeName())))
+		if f, ok := ts.objectConstraints[t.TypeName()]; ok {
+			k = c.MkAnd(k, f(ts, v))
+		}
+		return k
+	case t.Kind() == types.OpaqueKind && !isOptionalType(t):
+		k := ts.IsOpaque(v, t.TypeName())
+		if f, ok := ts.objectConstraints[t.TypeName()]; ok {
+			k = c.MkAnd(k, f(ts, v))
+		}
+		return k
 	}
 	return c.MkTrue()
 }

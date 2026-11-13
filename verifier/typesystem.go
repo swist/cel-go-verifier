@@ -73,6 +73,11 @@ type TypeSystem struct {
 	undefinedDoublesSeen map[*smt.Term]bool
 
 	parameterizeUnknowns bool
+
+	// formatters display encoded objects in witnesses, by type name.
+	formatters map[string]MessageFormatter
+	// objectConstraints constrain values of object types, by type name.
+	objectConstraints map[string]ObjectConstraint
 }
 
 // NewTypeSystem declares the CEL value encoding in c.

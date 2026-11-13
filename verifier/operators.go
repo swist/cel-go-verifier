@@ -199,6 +199,7 @@ func (o *operatorTranslator) mkTypeGuard(arg *smt.Term, t *types.Type) *smt.Term
 		if t.TypeName() == optionalTypeName {
 			return ts.IsOptional(arg)
 		}
+		return ts.IsOpaque(arg, t.TypeName())
 	}
 	panic(fmt.Sprintf("verifier: unsupported type for dynamic type guard: %v", t))
 }

@@ -93,16 +93,18 @@ func (e *Error) Error() string { return e.msg }
 
 // Verifier proves properties of checked CEL ASTs. It is safe for concurrent use.
 type Verifier struct {
-	env           *cel.Env
-	timeout       time.Duration
-	limit         int
-	unknownIdents map[string]bool
-	registry      *functionRegistry
-	typeProvider  TypeProvider
-	backend       smt.Backend
-	recorder      func() smt.Recorder
-	canonicalize  bool
-	extra         []*FunctionAxiom
+	env            *cel.Env
+	timeout        time.Duration
+	limit          int
+	unknownIdents  map[string]bool
+	registry       *functionRegistry
+	typeProvider   TypeProvider
+	backend        smt.Backend
+	recorder       func() smt.Recorder
+	canonicalize   bool
+	extra          []*FunctionAxiom
+	formatters     map[string]MessageFormatter
+	objConstraints map[string]ObjectConstraint
 }
 
 // Option configures a Verifier.
@@ -201,7 +203,10 @@ type query struct {
 
 func (v *Verifier) newQuery(method string, parameterizeUnknowns bool) *query {
 	c := smt.NewContext(v.backend)
-	return &query{v: v, c: c, tr: newASTTranslator(c, v.limit, v.unknownIdents, v.registry, v.typeProvider, parameterizeUnknowns), method: method}
+	tr := newASTTranslator(c, v.limit, v.unknownIdents, v.registry, v.typeProvider, parameterizeUnknowns)
+	tr.ts.formatters = v.formatters
+	tr.ts.objectConstraints = v.objConstraints
+	return &query{v: v, c: c, tr: tr, method: method}
 }
 
 func (q *query) close() { q.v.backend.Close(q.c) }
