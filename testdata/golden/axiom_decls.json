@@ -1,0 +1,172 @@
+[
+  {"name": "_+_", "overloads": [
+    {"id": "add_int64", "params": ["INT:int", "INT:int"], "result": "INT:int", "member": false, "translated": true}, 
+    {"id": "add_uint64", "params": ["UINT:uint", "UINT:uint"], "result": "UINT:uint", "member": false, "translated": true}, 
+    {"id": "add_double", "params": ["DOUBLE:double", "DOUBLE:double"], "result": "DOUBLE:double", "member": false, "translated": true}, 
+    {"id": "add_string", "params": ["STRING:string", "STRING:string"], "result": "STRING:string", "member": false, "translated": true}, 
+    {"id": "add_bytes", "params": ["BYTES:bytes", "BYTES:bytes"], "result": "BYTES:bytes", "member": false, "translated": true}, 
+    {"id": "add_list", "params": ["LIST:list", "LIST:list"], "result": "LIST:list", "member": false, "translated": true}, 
+    {"id": "add_timestamp_duration", "params": ["TIMESTAMP:google.protobuf.Timestamp", "DURATION:google.protobuf.Duration"], "result": "TIMESTAMP:google.protobuf.Timestamp", "member": false, "translated": true}, 
+    {"id": "add_duration_timestamp", "params": ["DURATION:google.protobuf.Duration", "TIMESTAMP:google.protobuf.Timestamp"], "result": "TIMESTAMP:google.protobuf.Timestamp", "member": false, "translated": true}, 
+    {"id": "add_duration_duration", "params": ["DURATION:google.protobuf.Duration", "DURATION:google.protobuf.Duration"], "result": "DURATION:google.protobuf.Duration", "member": false, "translated": true}]},
+  {"name": "_-_", "overloads": [
+    {"id": "subtract_int64", "params": ["INT:int", "INT:int"], "result": "INT:int", "member": false, "translated": true}, 
+    {"id": "subtract_uint64", "params": ["UINT:uint", "UINT:uint"], "result": "UINT:uint", "member": false, "translated": true}, 
+    {"id": "subtract_double", "params": ["DOUBLE:double", "DOUBLE:double"], "result": "DOUBLE:double", "member": false, "translated": true}, 
+    {"id": "subtract_timestamp_timestamp", "params": ["TIMESTAMP:google.protobuf.Timestamp", "TIMESTAMP:google.protobuf.Timestamp"], "result": "DURATION:google.protobuf.Duration", "member": false, "translated": true}, 
+    {"id": "subtract_timestamp_duration", "params": ["TIMESTAMP:google.protobuf.Timestamp", "DURATION:google.protobuf.Duration"], "result": "TIMESTAMP:google.protobuf.Timestamp", "member": false, "translated": true}, 
+    {"id": "subtract_duration_duration", "params": ["DURATION:google.protobuf.Duration", "DURATION:google.protobuf.Duration"], "result": "DURATION:google.protobuf.Duration", "member": false, "translated": true}]},
+  {"name": "_*_", "overloads": [
+    {"id": "multiply_int64", "params": ["INT:int", "INT:int"], "result": "INT:int", "member": false, "translated": true}, 
+    {"id": "multiply_uint64", "params": ["UINT:uint", "UINT:uint"], "result": "UINT:uint", "member": false, "translated": true}, 
+    {"id": "multiply_double", "params": ["DOUBLE:double", "DOUBLE:double"], "result": "DOUBLE:double", "member": false, "translated": true}]},
+  {"name": "_/_", "overloads": [
+    {"id": "divide_int64", "params": ["INT:int", "INT:int"], "result": "INT:int", "member": false, "translated": true}, 
+    {"id": "divide_uint64", "params": ["UINT:uint", "UINT:uint"], "result": "UINT:uint", "member": false, "translated": true}, 
+    {"id": "divide_double", "params": ["DOUBLE:double", "DOUBLE:double"], "result": "DOUBLE:double", "member": false, "translated": true}]},
+  {"name": "_%_", "overloads": [
+    {"id": "modulo_int64", "params": ["INT:int", "INT:int"], "result": "INT:int", "member": false, "translated": true}, 
+    {"id": "modulo_uint64", "params": ["UINT:uint", "UINT:uint"], "result": "UINT:uint", "member": false, "translated": true}]},
+  {"name": "-_", "overloads": [
+    {"id": "negate_int64", "params": ["INT:int"], "result": "INT:int", "member": false, "translated": true}, 
+    {"id": "negate_double", "params": ["DOUBLE:double"], "result": "DOUBLE:double", "member": false, "translated": true}]},
+  {"name": "cel.@mapInsert", "overloads": [
+    {"id": "@mapInsert_map_map", "params": ["MAP:map", "MAP:map"], "result": "MAP:map", "member": false, "translated": false}, 
+    {"id": "@mapInsert_map_key_value", "params": ["MAP:map", "TYPE_PARAM:K", "TYPE_PARAM:V"], "result": "MAP:map", "member": false, "translated": true}]},
+  {"name": "type", "overloads": [
+    {"id": "type", "params": ["TYPE_PARAM:A"], "result": "TYPE:type", "member": false, "translated": true}]},
+  {"name": "@in", "overloads": [
+    {"id": "in_list", "params": ["TYPE_PARAM:A", "LIST:list"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "in_map", "params": ["TYPE_PARAM:A", "MAP:map"], "result": "BOOL:bool", "member": false, "translated": true}]},
+  {"name": "_<_", "overloads": [
+    {"id": "less_bool", "params": ["BOOL:bool", "BOOL:bool"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_int64", "params": ["INT:int", "INT:int"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_uint64", "params": ["UINT:uint", "UINT:uint"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_double", "params": ["DOUBLE:double", "DOUBLE:double"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_string", "params": ["STRING:string", "STRING:string"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_bytes", "params": ["BYTES:bytes", "BYTES:bytes"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_timestamp", "params": ["TIMESTAMP:google.protobuf.Timestamp", "TIMESTAMP:google.protobuf.Timestamp"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_duration", "params": ["DURATION:google.protobuf.Duration", "DURATION:google.protobuf.Duration"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_int64_uint64", "params": ["INT:int", "UINT:uint"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_uint64_int64", "params": ["UINT:uint", "INT:int"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_int64_double", "params": ["INT:int", "DOUBLE:double"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_double_int64", "params": ["DOUBLE:double", "INT:int"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_uint64_double", "params": ["UINT:uint", "DOUBLE:double"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_double_uint64", "params": ["DOUBLE:double", "UINT:uint"], "result": "BOOL:bool", "member": false, "translated": true}]},
+  {"name": "_<=_", "overloads": [
+    {"id": "less_equals_bool", "params": ["BOOL:bool", "BOOL:bool"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_equals_int64", "params": ["INT:int", "INT:int"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_equals_uint64", "params": ["UINT:uint", "UINT:uint"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_equals_double", "params": ["DOUBLE:double", "DOUBLE:double"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_equals_string", "params": ["STRING:string", "STRING:string"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_equals_bytes", "params": ["BYTES:bytes", "BYTES:bytes"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_equals_timestamp", "params": ["TIMESTAMP:google.protobuf.Timestamp", "TIMESTAMP:google.protobuf.Timestamp"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_equals_duration", "params": ["DURATION:google.protobuf.Duration", "DURATION:google.protobuf.Duration"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_equals_int64_uint64", "params": ["INT:int", "UINT:uint"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_equals_uint64_int64", "params": ["UINT:uint", "INT:int"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_equals_int64_double", "params": ["INT:int", "DOUBLE:double"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_equals_double_int64", "params": ["DOUBLE:double", "INT:int"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_equals_uint64_double", "params": ["UINT:uint", "DOUBLE:double"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "less_equals_double_uint64", "params": ["DOUBLE:double", "UINT:uint"], "result": "BOOL:bool", "member": false, "translated": true}]},
+  {"name": "_>_", "overloads": [
+    {"id": "greater_bool", "params": ["BOOL:bool", "BOOL:bool"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_int64", "params": ["INT:int", "INT:int"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_uint64", "params": ["UINT:uint", "UINT:uint"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_double", "params": ["DOUBLE:double", "DOUBLE:double"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_string", "params": ["STRING:string", "STRING:string"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_bytes", "params": ["BYTES:bytes", "BYTES:bytes"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_timestamp", "params": ["TIMESTAMP:google.protobuf.Timestamp", "TIMESTAMP:google.protobuf.Timestamp"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_duration", "params": ["DURATION:google.protobuf.Duration", "DURATION:google.protobuf.Duration"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_int64_uint64", "params": ["INT:int", "UINT:uint"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_uint64_int64", "params": ["UINT:uint", "INT:int"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_int64_double", "params": ["INT:int", "DOUBLE:double"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_double_int64", "params": ["DOUBLE:double", "INT:int"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_uint64_double", "params": ["UINT:uint", "DOUBLE:double"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_double_uint64", "params": ["DOUBLE:double", "UINT:uint"], "result": "BOOL:bool", "member": false, "translated": true}]},
+  {"name": "_>=_", "overloads": [
+    {"id": "greater_equals_bool", "params": ["BOOL:bool", "BOOL:bool"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_equals_int64", "params": ["INT:int", "INT:int"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_equals_uint64", "params": ["UINT:uint", "UINT:uint"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_equals_double", "params": ["DOUBLE:double", "DOUBLE:double"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_equals_string", "params": ["STRING:string", "STRING:string"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_equals_bytes", "params": ["BYTES:bytes", "BYTES:bytes"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_equals_timestamp", "params": ["TIMESTAMP:google.protobuf.Timestamp", "TIMESTAMP:google.protobuf.Timestamp"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_equals_duration", "params": ["DURATION:google.protobuf.Duration", "DURATION:google.protobuf.Duration"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_equals_int64_uint64", "params": ["INT:int", "UINT:uint"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_equals_uint64_int64", "params": ["UINT:uint", "INT:int"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_equals_int64_double", "params": ["INT:int", "DOUBLE:double"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_equals_double_int64", "params": ["DOUBLE:double", "INT:int"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_equals_uint64_double", "params": ["UINT:uint", "DOUBLE:double"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "greater_equals_double_uint64", "params": ["DOUBLE:double", "UINT:uint"], "result": "BOOL:bool", "member": false, "translated": true}]},
+  {"name": "size", "overloads": [
+    {"id": "size_string", "params": ["STRING:string"], "result": "INT:int", "member": false, "translated": true}, 
+    {"id": "size_bytes", "params": ["BYTES:bytes"], "result": "INT:int", "member": false, "translated": true}, 
+    {"id": "size_list", "params": ["LIST:list"], "result": "INT:int", "member": false, "translated": true}, 
+    {"id": "size_map", "params": ["MAP:map"], "result": "INT:int", "member": false, "translated": true}, 
+    {"id": "string_size", "params": ["STRING:string"], "result": "INT:int", "member": true, "translated": true}, 
+    {"id": "bytes_size", "params": ["BYTES:bytes"], "result": "INT:int", "member": true, "translated": true}, 
+    {"id": "list_size", "params": ["LIST:list"], "result": "INT:int", "member": true, "translated": true}, 
+    {"id": "map_size", "params": ["MAP:map"], "result": "INT:int", "member": true, "translated": true}]},
+  {"name": "optional.none", "overloads": [
+    {"id": "optional_none", "params": [], "result": "OPAQUE:optional_type", "member": false, "translated": true}]},
+  {"name": "optional.of", "overloads": [
+    {"id": "optional_of", "params": ["TYPE_PARAM:V"], "result": "OPAQUE:optional_type", "member": false, "translated": true}]},
+  {"name": "optional.ofNonZeroValue", "overloads": [
+    {"id": "optional_ofNonZeroValue", "params": ["TYPE_PARAM:V"], "result": "OPAQUE:optional_type", "member": false, "translated": true}]},
+  {"name": "hasValue", "overloads": [
+    {"id": "optional_hasValue", "params": ["OPAQUE:optional_type"], "result": "BOOL:bool", "member": true, "translated": true}]},
+  {"name": "value", "overloads": [
+    {"id": "optional_value", "params": ["OPAQUE:optional_type"], "result": "TYPE_PARAM:V", "member": true, "translated": true}]},
+  {"name": "orValue", "overloads": [
+    {"id": "optional_orValue_value", "params": ["OPAQUE:optional_type", "TYPE_PARAM:V"], "result": "TYPE_PARAM:V", "member": true, "translated": true}]},
+  {"name": "or", "overloads": [
+    {"id": "optional_or_optional", "params": ["OPAQUE:optional_type", "OPAQUE:optional_type"], "result": "OPAQUE:optional_type", "member": true, "translated": true}]},
+  {"name": "_?._", "overloads": [
+    {"id": "select_optional_field", "params": ["DYN:dyn", "STRING:string"], "result": "OPAQUE:optional_type", "member": false, "translated": true}]},
+  {"name": "contains", "overloads": [
+    {"id": "contains_string", "params": ["STRING:string", "STRING:string"], "result": "BOOL:bool", "member": true, "translated": true}]},
+  {"name": "startsWith", "overloads": [
+    {"id": "starts_with_string", "params": ["STRING:string", "STRING:string"], "result": "BOOL:bool", "member": true, "translated": true}]},
+  {"name": "endsWith", "overloads": [
+    {"id": "ends_with_string", "params": ["STRING:string", "STRING:string"], "result": "BOOL:bool", "member": true, "translated": true}]},
+  {"name": "int", "overloads": [
+    {"id": "int64_to_int64", "params": ["INT:int"], "result": "INT:int", "member": false, "translated": true}, 
+    {"id": "uint64_to_int64", "params": ["UINT:uint"], "result": "INT:int", "member": false, "translated": true}, 
+    {"id": "double_to_int64", "params": ["DOUBLE:double"], "result": "INT:int", "member": false, "translated": true}, 
+    {"id": "string_to_int64", "params": ["STRING:string"], "result": "INT:int", "member": false, "translated": true}, 
+    {"id": "timestamp_to_int64", "params": ["TIMESTAMP:google.protobuf.Timestamp"], "result": "INT:int", "member": false, "translated": true}]},
+  {"name": "uint", "overloads": [
+    {"id": "uint64_to_uint64", "params": ["UINT:uint"], "result": "UINT:uint", "member": false, "translated": true}, 
+    {"id": "int64_to_uint64", "params": ["INT:int"], "result": "UINT:uint", "member": false, "translated": true}, 
+    {"id": "double_to_uint64", "params": ["DOUBLE:double"], "result": "UINT:uint", "member": false, "translated": true}, 
+    {"id": "string_to_uint64", "params": ["STRING:string"], "result": "UINT:uint", "member": false, "translated": true}]},
+  {"name": "double", "overloads": [
+    {"id": "double_to_double", "params": ["DOUBLE:double"], "result": "DOUBLE:double", "member": false, "translated": true}, 
+    {"id": "int64_to_double", "params": ["INT:int"], "result": "DOUBLE:double", "member": false, "translated": true}, 
+    {"id": "uint64_to_double", "params": ["UINT:uint"], "result": "DOUBLE:double", "member": false, "translated": true}, 
+    {"id": "string_to_double", "params": ["STRING:string"], "result": "DOUBLE:double", "member": false, "translated": true}]},
+  {"name": "string", "overloads": [
+    {"id": "string_to_string", "params": ["STRING:string"], "result": "STRING:string", "member": false, "translated": true}, 
+    {"id": "int64_to_string", "params": ["INT:int"], "result": "STRING:string", "member": false, "translated": true}, 
+    {"id": "uint64_to_string", "params": ["UINT:uint"], "result": "STRING:string", "member": false, "translated": true}, 
+    {"id": "double_to_string", "params": ["DOUBLE:double"], "result": "STRING:string", "member": false, "translated": true}, 
+    {"id": "bool_to_string", "params": ["BOOL:bool"], "result": "STRING:string", "member": false, "translated": true}, 
+    {"id": "bytes_to_string", "params": ["BYTES:bytes"], "result": "STRING:string", "member": false, "translated": true}, 
+    {"id": "timestamp_to_string", "params": ["TIMESTAMP:google.protobuf.Timestamp"], "result": "STRING:string", "member": false, "translated": true}, 
+    {"id": "duration_to_string", "params": ["DURATION:google.protobuf.Duration"], "result": "STRING:string", "member": false, "translated": true}]},
+  {"name": "bytes", "overloads": [
+    {"id": "bytes_to_bytes", "params": ["BYTES:bytes"], "result": "BYTES:bytes", "member": false, "translated": true}, 
+    {"id": "string_to_bytes", "params": ["STRING:string"], "result": "BYTES:bytes", "member": false, "translated": true}]},
+  {"name": "dyn", "overloads": [
+    {"id": "to_dyn", "params": ["TYPE_PARAM:A"], "result": "DYN:dyn", "member": false, "translated": true}]},
+  {"name": "duration", "overloads": [
+    {"id": "duration_to_duration", "params": ["DURATION:google.protobuf.Duration"], "result": "DURATION:google.protobuf.Duration", "member": false, "translated": true}, 
+    {"id": "string_to_duration", "params": ["STRING:string"], "result": "DURATION:google.protobuf.Duration", "member": false, "translated": true}]},
+  {"name": "timestamp", "overloads": [
+    {"id": "string_to_timestamp", "params": ["STRING:string"], "result": "TIMESTAMP:google.protobuf.Timestamp", "member": false, "translated": true}, 
+    {"id": "timestamp_to_timestamp", "params": ["TIMESTAMP:google.protobuf.Timestamp"], "result": "TIMESTAMP:google.protobuf.Timestamp", "member": false, "translated": true}, 
+    {"id": "int64_to_timestamp", "params": ["INT:int"], "result": "TIMESTAMP:google.protobuf.Timestamp", "member": false, "translated": true}]},
+  {"name": "bool", "overloads": [
+    {"id": "bool_to_bool", "params": ["BOOL:bool"], "result": "BOOL:bool", "member": false, "translated": true}, 
+    {"id": "string_to_bool", "params": ["STRING:string"], "result": "BOOL:bool", "member": false, "translated": true}]}
+]
