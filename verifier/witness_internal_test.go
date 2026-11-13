@@ -1,8 +1,11 @@
 package verifier
 
 import (
+	"strings"
 	"testing"
 	"time"
+
+	"cel.dev/cel-go/cel"
 
 	"github.com/swist/cel-go-verifier/smt"
 	"github.com/swist/cel-go-verifier/smt/z3proc"
@@ -52,5 +55,41 @@ func TestGenerateWitnessMapWithoutExactValueValueEmpty(t *testing.T) {
 				t.Errorf("value = %v, want none (display %s)", v.Value, v.Display)
 			}
 		})
+	}
+}
+
+// Ports of getNumericEqualityWithConstant_skipsIntForDouble and _skipsDoubleForInt.
+func TestNumericEqualityWithConstantSkipsOtherKinds(t *testing.T) {
+	b := z3proc.New()
+	if !b.Available() {
+		t.Skip("z3 not found; set Z3_PATH")
+	}
+	env, err := cel.NewEnv(cel.Variable("d", cel.DoubleType), cel.Variable("x", cel.IntType))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for expr, want := range map[string]struct{ has, hasNot []string }{
+		"d == 5.0": {[]string{"getDouble"}, []string{"getInt", "getUint"}},
+		"x == 5":   {[]string{"getInt"}, nil},
+	} {
+		a, iss := env.Compile(expr)
+		if iss.Err() != nil {
+			t.Fatal(iss.Err())
+		}
+		c := smt.NewContext(b)
+		r, _ := newFunctionRegistry(nil)
+		tr := newASTTranslator(c, 3, nil, r, emptyTypeProvider{}, false)
+		got := smt.Print(tr.translate(a.NativeRep()).z3)
+		b.Close(c)
+		for _, s := range want.has {
+			if !strings.Contains(got, s) {
+				t.Errorf("%s: %s doesn't contain %s", expr, got, s)
+			}
+		}
+		for _, s := range want.hasNot {
+			if strings.Contains(got, s) {
+				t.Errorf("%s: %s contains %s", expr, got, s)
+			}
+		}
 	}
 }
