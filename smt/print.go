@@ -47,8 +47,16 @@ func (p *printer) print(t *Term) string {
 	count(t)
 	names := map[*Term]string{}
 	var bindings []*Term
+	bound := map[*Term]bool{}
 	for _, n := range order {
-		if n != t && refs[n] > 1 && len(n.Args) > 0 && n.Op != OpLambda && n.Op != OpForall && n.Op != OpExists && !containsBound(n) {
+		b := n.Op == OpVar
+		for _, a := range n.Args {
+			b = b || bound[a]
+		}
+		bound[n] = b
+	}
+	for _, n := range order {
+		if n != t && refs[n] > 1 && len(n.Args) > 0 && n.Op != OpLambda && n.Op != OpForall && n.Op != OpExists && !bound[n] {
 			bindings = append(bindings, n)
 		}
 	}
@@ -68,18 +76,6 @@ func (p *printer) print(t *Term) string {
 	p.write(&sb, t, names)
 	sb.WriteString(strings.Repeat(")", len(bindings)))
 	return sb.String()
-}
-
-func containsBound(t *Term) bool {
-	if t.Op == OpVar {
-		return true
-	}
-	for _, a := range t.Args {
-		if containsBound(a) {
-			return true
-		}
-	}
-	return false
 }
 
 var stringOpNames = map[Op]string{

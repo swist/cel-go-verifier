@@ -108,6 +108,17 @@ type process struct {
 
 const marker = "<<z3proc-done>>"
 
+// trace receives every command sent to z3 when $Z3PROC_TRACE names a file.
+var trace io.Writer
+
+func init() {
+	if path := os.Getenv("Z3PROC_TRACE"); path != "" {
+		if f, err := os.Create(path); err == nil {
+			trace = f
+		}
+	}
+}
+
 func (b *Backend) start(c *smt.Context) (*process, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cmd := exec.CommandContext(ctx, b.Path, "-in", "-smt2")
@@ -137,6 +148,8 @@ func (b *Backend) start(c *smt.Context) (*process, error) {
 		return nil, fmt.Errorf("starting %s: %w", b.Path, err)
 	}
 	p.send("(set-option :print-success false)")
+	// Declarations made between push and pop must survive the pop, as they do in the API.
+	p.send("(set-option :global-declarations true)")
 	p.send("(set-option :model true)")
 	return p, nil
 }
@@ -157,6 +170,9 @@ func (p *process) query(cmd string) (string, error) {
 	}
 	p.send(cmd)
 	p.send(`(echo "` + marker + `")`)
+	if trace != nil {
+		fmt.Fprintf(trace, "%s", p.pending.String())
+	}
 	if _, err := io.WriteString(p.stdin, p.pending.String()); err != nil {
 		return "", p.wrapErr(err)
 	}
@@ -173,6 +189,9 @@ func (p *process) query(cmd string) (string, error) {
 		out.WriteString(line)
 	}
 	s := strings.TrimSpace(out.String())
+	if trace != nil {
+		fmt.Fprintf(trace, ";; => %s\n", s)
+	}
 	if strings.HasPrefix(s, "(error") {
 		return "", fmt.Errorf("z3: %s", s)
 	}
@@ -391,6 +410,9 @@ type model struct{ s *solver }
 
 func (m *model) Eval(t *smt.Term, completion bool) (*smt.Term, error) {
 	p := m.s.p
+	if len(p.sources) > 0 {
+		t = p.substituteModelValues(t)
+	}
 	cmd := "(eval " + p.term(t)
 	if completion {
 		cmd += " :completion true"
