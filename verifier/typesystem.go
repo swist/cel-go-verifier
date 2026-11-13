@@ -63,9 +63,9 @@ type TypeSystem struct {
 
 	unknownIDSort, optionalRefSort, listRefSort, mapRefSort, messageRefSort *smt.Sort
 
-	optionalValueFunc, optionalOfRefFunc, asSeqFunc                *smt.FuncDecl
-	mapValuesFunc, mapKeysFunc, mapPresenceFunc                    *smt.FuncDecl
-	msgValuesFunc, msgPresenceFunc, msgTypeNameFunc                *smt.FuncDecl
+	optionalValueFunc, optionalOfRefFunc, asSeqFunc                     *smt.FuncDecl
+	mapValuesFunc, mapKeysFunc, mapPresenceFunc                         *smt.FuncDecl
+	msgValuesFunc, msgPresenceFunc, msgTypeNameFunc                     *smt.FuncDecl
 	hasTruncatedTypeConstraintFunc, truncateDoubleFunc, hasFractionFunc *smt.FuncDecl
 
 	// Doubles whose truncation and fraction are still uninterpreted, in order of first use.
@@ -162,9 +162,13 @@ func (ts *TypeSystem) InternFuncDecl(name string, domain []*smt.Sort, rng *smt.S
 	return ts.c.MkFuncDecl(name, domain, rng)
 }
 
-func (ts *TypeSystem) cons(k *smt.Constructor, arg *smt.Term) *smt.Term { return ts.c.MkApp(k.Decl, arg) }
-func (ts *TypeSystem) test(k *smt.Constructor, v *smt.Term) *smt.Term   { return ts.c.MkApp(k.Tester, v) }
-func (ts *TypeSystem) get(k *smt.Constructor, v *smt.Term) *smt.Term    { return ts.c.MkApp(k.Accessors[0], v) }
+func (ts *TypeSystem) cons(k *smt.Constructor, arg *smt.Term) *smt.Term {
+	return ts.c.MkApp(k.Decl, arg)
+}
+func (ts *TypeSystem) test(k *smt.Constructor, v *smt.Term) *smt.Term { return ts.c.MkApp(k.Tester, v) }
+func (ts *TypeSystem) get(k *smt.Constructor, v *smt.Term) *smt.Term {
+	return ts.c.MkApp(k.Accessors[0], v)
+}
 
 // MkBool returns the CEL bool b.
 func (ts *TypeSystem) MkBool(b bool) *smt.Term { return ts.cons(ts.boolCons, ts.c.MkBool(b)) }
@@ -250,7 +254,9 @@ func (ts *TypeSystem) StructuralEquality(a0, a1 *smt.Term) *smt.Term {
 }
 
 // MkString returns the CEL string s.
-func (ts *TypeSystem) MkString(s string) *smt.Term { return ts.cons(ts.stringCons, MkZ3String(ts.c, s)) }
+func (ts *TypeSystem) MkString(s string) *smt.Term {
+	return ts.cons(ts.stringCons, MkZ3String(ts.c, s))
+}
 
 // MkBytes returns CEL bytes whose UTF-8 decoding is s.
 func (ts *TypeSystem) MkBytes(s string) *smt.Term { return ts.cons(ts.bytesCons, MkZ3String(ts.c, s)) }
@@ -366,7 +372,9 @@ func (ts *TypeSystem) IsBool(v *smt.Term) *smt.Term { return ts.test(ts.boolCons
 func (ts *TypeSystem) UnwrapBool(v *smt.Term) *smt.Term { return ts.get(ts.boolCons, v) }
 
 // MkOptionalNone returns optional.none().
-func (ts *TypeSystem) MkOptionalNone() *smt.Term { return ts.cons(ts.optionalCons, ts.MkNoneOptionalRef()) }
+func (ts *TypeSystem) MkOptionalNone() *smt.Term {
+	return ts.cons(ts.optionalCons, ts.MkNoneOptionalRef())
+}
 
 // MkNoneOptionalRef returns the reference of the empty optional.
 func (ts *TypeSystem) MkNoneOptionalRef() *smt.Term {

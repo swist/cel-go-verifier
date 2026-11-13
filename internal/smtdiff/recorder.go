@@ -17,7 +17,9 @@ type Recorder struct {
 }
 
 // Factory returns a recorder factory that appends to r, for verifier.Recorder.
-func (r *Recorder) Factory() func() smt.Recorder { return func() smt.Recorder { return &queryRecorder{r: r} } }
+func (r *Recorder) Factory() func() smt.Recorder {
+	return func() smt.Recorder { return &queryRecorder{r: r} }
+}
 
 // String returns the transcript.
 func (r *Recorder) String() string {

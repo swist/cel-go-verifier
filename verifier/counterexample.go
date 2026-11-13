@@ -43,7 +43,7 @@ type cxValue struct {
 }
 
 func exactValue(v ref.Val, display string) cxValue { return cxValue{v, true, display} }
-func inexactValue(display string) cxValue           { return cxValue{nil, false, display} }
+func inexactValue(display string) cxValue          { return cxValue{nil, false, display} }
 
 type counterexampleGenerator struct {
 	c      *smt.Context

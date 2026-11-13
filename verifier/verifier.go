@@ -55,8 +55,8 @@ type Result struct {
 // Message details the outcome, including the witness.
 func (r Result) Message() string { return r.Reason + r.Counterexample }
 
-func verifiedResult() Result               { return Result{Status: Verified} }
-func failedResult(reason string) Result     { return Result{Status: Violated, Reason: reason} }
+func verifiedResult() Result                  { return Result{Status: Verified} }
+func failedResult(reason string) Result       { return Result{Status: Violated, Reason: reason} }
 func inconclusiveResult(reason string) Result { return Result{Status: Inconclusive, Reason: reason} }
 
 func resultWithWitness(st Status, reason string, w *Witness, isCounterexample bool) Result {

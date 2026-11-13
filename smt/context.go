@@ -23,7 +23,7 @@ type Context struct {
 	// declOrder lists the uninterpreted declarations in creation order.
 	declOrder []*FuncDecl
 	// sortOrder lists the uninterpreted and datatype sorts in creation order.
-	sortOrder []*Sort
+	sortOrder  []*Sort
 	declByName map[string][]*FuncDecl
 	sortByName map[string]*Sort
 

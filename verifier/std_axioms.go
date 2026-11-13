@@ -340,7 +340,9 @@ func comparisonAxiom(name, prefix string, k cmpKind) *FunctionAxiom {
 		}
 	}
 	same := func(get intGetter) func(c *smt.Context, ts *TypeSystem, l, r *smt.Term) *smt.Term {
-		return func(c *smt.Context, ts *TypeSystem, l, r *smt.Term) *smt.Term { return arith(c, get(ts, l), get(ts, r)) }
+		return func(c *smt.Context, ts *TypeSystem, l, r *smt.Term) *smt.Term {
+			return arith(c, get(ts, l), get(ts, r))
+		}
 	}
 	mixed := func(gl, gr intGetter) func(c *smt.Context, ts *TypeSystem, l, r *smt.Term) *smt.Term {
 		return func(c *smt.Context, ts *TypeSystem, l, r *smt.Term) *smt.Term { return arith(c, gl(ts, l), gr(ts, r)) }
@@ -424,7 +426,9 @@ func singleOverload(name string) string {
 }
 
 func optionalAxioms() []*FunctionAxiom {
-	unary := func(name string, t UnaryTranslator) *FunctionAxiom { return std(name).Unary(singleOverload(name), t, false) }
+	unary := func(name string, t UnaryTranslator) *FunctionAxiom {
+		return std(name).Unary(singleOverload(name), t, false)
+	}
 	binary := func(name string, t BinaryTranslator) *FunctionAxiom { return std(name).Binary(singleOverload(name), t) }
 	return []*FunctionAxiom{
 		std("optional.none").Overload(singleOverload("optional.none"), func(c *smt.Context, ts *TypeSystem, _ func(*smt.Term), _, _ []*smt.Term) (OverloadResult, bool) {

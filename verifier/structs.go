@@ -21,15 +21,15 @@ const maxUint32 = 0xFFFFFFFF
 
 // structTranslator translates message construction and field selection.
 type structTranslator struct {
-	x            *translationContext
-	c            *smt.Context
-	ts           *TypeSystem
-	tcg          *typeConstraintGenerator
-	tp           TypeProvider
-	tr           *astTranslator
-	emptyMsg     map[string]*smt.Term
-	emptyList    *smt.Term
-	emptyMap     *smt.Term
+	x         *translationContext
+	c         *smt.Context
+	ts        *TypeSystem
+	tcg       *typeConstraintGenerator
+	tp        TypeProvider
+	tr        *astTranslator
+	emptyMsg  map[string]*smt.Term
+	emptyList *smt.Term
+	emptyMap  *smt.Term
 }
 
 func (st *structTranslator) translateStruct(e ast.Expr, a *ast.AST) tv {

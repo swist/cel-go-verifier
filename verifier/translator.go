@@ -17,15 +17,15 @@ import (
 // datatype. One translator must translate every AST of a query, so that
 // uninterpreted functions and constraints are shared.
 type astTranslator struct {
-	c            *smt.Context
-	ts           *TypeSystem
-	x            *translationContext
-	tcg          *typeConstraintGenerator
-	ops          *operatorTranslator
-	comps        *comprehensionTranslator
-	structs      *structTranslator
+	c             *smt.Context
+	ts            *TypeSystem
+	x             *translationContext
+	tcg           *typeConstraintGenerator
+	ops           *operatorTranslator
+	comps         *comprehensionTranslator
+	structs       *structTranslator
 	unknownIdents map[string]bool
-	listLiterals map[*smt.Term]*smt.Term
+	listLiterals  map[*smt.Term]*smt.Term
 }
 
 func newASTTranslator(c *smt.Context, limit int, unknownIdents map[string]bool, r *functionRegistry, tp TypeProvider, parameterizeUnknowns bool) *astTranslator {

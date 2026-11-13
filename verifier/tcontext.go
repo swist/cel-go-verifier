@@ -11,19 +11,19 @@ import (
 
 // translationContext is the state shared by the translators of one query.
 type translationContext struct {
-	c                 *smt.Context
-	ts                *TypeSystem
-	tcg               *typeConstraintGenerator
-	unrollLimit       int
-	constraints       []*smt.Term
-	constraintSet     map[*smt.Term]bool
-	inputVars         []*smt.Term
-	inputVarTypes     map[*smt.Term]*types.Type
-	unmodeledResults  []*smt.Term
-	approxDescs       []string
-	approxTerms       map[string][]*smt.Term
-	symbolTable       map[string]tv
-	localScope        map[string]tv
+	c                *smt.Context
+	ts               *TypeSystem
+	tcg              *typeConstraintGenerator
+	unrollLimit      int
+	constraints      []*smt.Term
+	constraintSet    map[*smt.Term]bool
+	inputVars        []*smt.Term
+	inputVarTypes    map[*smt.Term]*types.Type
+	unmodeledResults []*smt.Term
+	approxDescs      []string
+	approxTerms      map[string][]*smt.Term
+	symbolTable      map[string]tv
+	localScope       map[string]tv
 }
 
 func newTranslationContext(c *smt.Context, ts *TypeSystem, unrollLimit int) *translationContext {

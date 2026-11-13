@@ -65,7 +65,7 @@ type cfield struct {
 }
 
 type ccomp struct {
-	iterVar, iterVar2, accuVar string
+	iterVar, iterVar2, accuVar              string
 	iterRange, accuInit, cond, step, result *cnode
 }
 
