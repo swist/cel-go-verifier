@@ -23,6 +23,7 @@ import (
 	proto3pb "cel.dev/expr/conformance/proto3"
 
 	"github.com/swist/cel-go-verifier/internal/smtdiff"
+	"github.com/swist/cel-go-verifier/smt"
 	"github.com/swist/cel-go-verifier/smt/z3proc"
 	"github.com/swist/cel-go-verifier/verifier"
 )
@@ -38,9 +39,16 @@ var strictGolden = flag.Bool("strict_golden", true, "fail tests whose solver tra
 
 const goldenDir = "../testdata/golden/java"
 
+// testBackend creates the solver backend of the tests: the z3 executable, or
+// libz3 when built with -tags z3cgo.
+var (
+	testBackend = func() smt.Backend { return z3proc.New() }
+	cgoBackend  = false
+)
+
 func requireZ3(t testing.TB) {
 	t.Helper()
-	if !z3proc.New().Available() {
+	if !cgoBackend && !z3proc.New().Available() {
 		t.Skip("z3 not found; set Z3_PATH")
 	}
 }
@@ -134,12 +142,9 @@ func (p testTypeProvider) StructTypeNames() []string {
 	return out
 }
 
-func (p testTypeProvider) FieldType(msg, field string) (*types.Type, bool) {
-	ft, ok := p.env.CELTypeProvider().FindStructFieldType(msg, field)
-	if !ok {
-		return nil, false
-	}
-	return ft.Type, true
+func (p testTypeProvider) FieldType(msg, field string) (verifier.FieldInfo, bool) {
+	return verifier.NewProtoTypeProvider(p.env.CELTypeProvider(),
+		proto3pb.File_cel_expr_conformance_proto3_test_all_types_proto).FieldType(msg, field)
 }
 
 func compile(t testing.TB, env *cel.Env, expr string) *cel.Ast {
@@ -165,12 +170,32 @@ func newGoldenRun(t *testing.T, name string) *goldenRun {
 
 func (g *goldenRun) verifier(opts ...verifier.Option) *verifier.Verifier {
 	env := javaTestEnv(g.t)
-	opts = append([]verifier.Option{verifier.Types(testTypeProvider{env, "types:CelVerifierZ3ImplTest.CEL"}), verifier.Recorder(g.rec.Factory())}, opts...)
+	opts = append([]verifier.Option{
+		verifier.Types(testTypeProvider{env, "types:CelVerifierZ3ImplTest.CEL"}),
+		verifier.Recorder(g.rec.Factory()),
+		verifier.Backend(testBackend()),
+	}, opts...)
 	v, err := verifier.New(env, opts...)
 	if err != nil {
 		g.t.Fatal(err)
 	}
 	return v
+}
+
+// knownDivergences are the cases whose transcripts differ from cel-java's
+// because cel-go's environment differs, not because the verifier does.
+var knownDivergences = map[string]string{
+	z3 + "isSatisfiable_failure[DYN_OPTIONAL_VALUE_OUT_OF_RANGE]":                      "cel-go's checker types dyn_var.value() as int and resolves `< 0u` to less_int64_uint64 only",
+	z3 + "isAlwaysTrue_success[TYPE_AXIOM_OPTIONAL]":                                   "cel-go's checker types the optional_type identifier as type(optional_type(dyn)), cel-java as type(optional_type(int))",
+	z3 + "isAlwaysTrue_violation_returnsFalse[UNINTERPRETED_CONVERSION_CAN_ERROR_INT]": "cel-go's stdlib has int(duration), which cel-java's lacks",
+}
+
+// procDivergences differ only with the z3 process backend: Z3's simplifier
+// orders arguments by term creation, which only the cgo backend reproduces.
+var procDivergences = map[string]string{
+	z3 + "isAlwaysTrue_success[MAP_LITERAL_SINGLE_VARIABLE_KEY_LIST_VALUE]":              "simplifier argument order",
+	z3 + "isAlwaysTrue_success[MAP_LITERAL_WITH_VARIABLE_KEY_EQ]":                        "simplifier argument order",
+	z3 + "isAlwaysTrue_violation_returnsFalse[OPTIONAL_MAP_ENTRY_DYN_VAR_TYPE_MISMATCH]": "simplifier argument order",
 }
 
 var goldenStats struct {
@@ -221,6 +246,14 @@ func (g *goldenRun) check() {
 		goldenStats.Lock()
 		goldenStats.mismatched++
 		goldenStats.Unlock()
+		reason, known := knownDivergences[g.name]
+		if !known && !cgoBackend {
+			reason, known = procDivergences[g.name]
+		}
+		if known {
+			t.Logf("transcript differs from cel-java as expected (%s): %s", reason, d)
+			return
+		}
 		if *strictGolden {
 			t.Errorf("transcript differs from cel-java (%s): %s", path, d)
 		} else {

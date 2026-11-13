@@ -11,10 +11,18 @@ import (
 
 // TypeProvider describes the message types the verifier models.
 type TypeProvider interface {
-	// StructTypeNames lists the message types, in a stable order.
+	// StructTypeNames lists the message types, in a stable order. The order
+	// determines the order of the cases of dynamic field selections.
 	StructTypeNames() []string
 	// FieldType returns the type of a field of a message type.
-	FieldType(message, field string) (*types.Type, bool)
+	FieldType(message, field string) (FieldInfo, bool)
+}
+
+// FieldInfo describes a message field.
+type FieldInfo struct {
+	Type *types.Type
+	// IsEnum marks enum fields, which hold ints but aren't constrained to int's range.
+	IsEnum bool
 }
 
 const maxUint32 = 0xFFFFFFFF
@@ -67,7 +75,8 @@ func (st *structTranslator) translateStruct(e ast.Expr, a *ast.AST) tv {
 		key := MkZ3String(c, fe.Name())
 		v := st.tr.translateExpr(fe.Value(), a)
 		value := v.z3
-		fieldType, ok := st.tp.FieldType(name, fe.Name())
+		fi, ok := st.tp.FieldType(name, fe.Name())
+		fieldType := fi.Type
 		if !ok {
 			fieldType = exprType(a, fe.Value())
 		}
@@ -347,7 +356,7 @@ func (st *structTranslator) translateSelect(e ast.Expr, a *ast.AST) tv {
 			}
 			isType := c.MkEq(typeName, MkZ3String(c, tn))
 			modeled = append(modeled, isType)
-			ft, declared := st.tp.FieldType(tn, field)
+			fi, declared := st.tp.FieldType(tn, field)
 			if !declared {
 				undeclared = append(undeclared, isType)
 				msgRead.Case(isType, ts.MkError())
@@ -356,8 +365,17 @@ func (st *structTranslator) translateSelect(e ast.Expr, a *ast.AST) tv {
 			if sel.IsTestOnly() {
 				continue
 			}
-			st.x.addConstraint(c.MkImplies(c.MkAnd(isMsg, isType, msgAcc.presence), st.tcg.forType(msgAcc.value, ft)))
-			msgRead.Case(isType, c.MkITE(msgAcc.presence, msgAcc.value, st.defaultValue(ft)))
+			// cel-java's enum types aren't int, so they get no constraint, but read as 0 when unset.
+			tc := c.MkTrue()
+			if !fi.IsEnum {
+				tc = st.tcg.forType(msgAcc.value, fi.Type)
+			}
+			st.x.addConstraint(c.MkImplies(c.MkAnd(isMsg, isType, msgAcc.presence), tc))
+			def := ts.MkInt(0)
+			if !fi.IsEnum {
+				def = st.defaultValue(fi.Type)
+			}
+			msgRead.Case(isType, c.MkITE(msgAcc.presence, msgAcc.value, def))
 		}
 		unmodeledMessage = st.x.recordApproximation("messages of types the type provider doesn't declare",
 			c.MkAnd(isMsg, c.MkNot(MkOrFlattened(c, modeled...))))

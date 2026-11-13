@@ -12,7 +12,6 @@ import (
 
 	"cel.dev/cel-go/cel"
 	"cel.dev/cel-go/common/ast"
-	"cel.dev/cel-go/common/types"
 
 	"github.com/swist/cel-go-verifier/smt"
 	"github.com/swist/cel-go-verifier/smt/z3proc"
@@ -190,7 +189,7 @@ func New(env *cel.Env, opts ...Option) (*Verifier, error) {
 type emptyTypeProvider struct{}
 
 func (emptyTypeProvider) StructTypeNames() []string                    { return nil }
-func (emptyTypeProvider) FieldType(string, string) (*types.Type, bool) { return nil, false }
+func (emptyTypeProvider) FieldType(string, string) (FieldInfo, bool) { return FieldInfo{}, false }
 
 // query is the state of one verification query.
 type query struct {

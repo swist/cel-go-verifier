@@ -562,7 +562,7 @@ func UninterpretedConversion(id string, result *types.Type, mayBeNaN bool) Overl
 func typeConversionAxioms() []*FunctionAxiom {
 	u := uninterpretedConversion
 	return []*FunctionAxiom{
-		std("int").
+		celGoAxioms(std("int")).
 			Unary("int64_to_int64", identity, false).
 			Unary("uint64_to_int64", func(c *smt.Context, ts *TypeSystem, _ func(*smt.Term), arg *smt.Term) (*smt.Term, bool) {
 				v := ts.GetUint(arg)

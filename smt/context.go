@@ -27,7 +27,8 @@ type Context struct {
 	declByName map[string][]*FuncDecl
 	sortByName map[string]*Sort
 
-	backend Backend
+	backend  Backend
+	observer Observer
 
 	boolSort, intSort, realSort, stringSort, rmSort *Sort
 	trueT, falseT                                   *Term
@@ -43,6 +44,9 @@ func NewContext(backend Backend) *Context {
 		sortByName: map[string]*Sort{},
 		backend:    backend,
 	}
+	if o, ok := backend.(interface{ Observe(*Context) Observer }); ok {
+		c.observer = o.Observe(c)
+	}
 	c.boolSort = c.internSort(&Sort{Kind: KindBool, key: "Bool"})
 	c.intSort = c.internSort(&Sort{Kind: KindInt, key: "Int"})
 	c.realSort = c.internSort(&Sort{Kind: KindReal, key: "Real"})
@@ -51,6 +55,19 @@ func NewContext(backend Backend) *Context {
 	c.trueT = c.intern(&Term{Op: OpTrue, Sort: c.boolSort})
 	c.falseT = c.intern(&Term{Op: OpFalse, Sort: c.boolSort})
 	return c
+}
+
+// Observer is notified of every sort, declaration and term a context creates,
+// in creation order. Backends that build solver terms eagerly, as the Z3 API
+// does, use it to reproduce the creation order (Z3's simplifier orders
+// arguments by creation).
+type Observer interface {
+	// OnSort is called for new sorts; for datatypes, once all constructors exist.
+	OnSort(*Sort)
+	// OnDecl is called for new uninterpreted declarations.
+	OnDecl(*FuncDecl)
+	// OnTerm is called for new terms, after their arguments.
+	OnTerm(*Term)
 }
 
 // Backend returns the backend of the context.
@@ -64,6 +81,9 @@ func (c *Context) internSort(s *Sort) *Sort {
 		return e
 	}
 	c.sorts[s.key] = s
+	if c.observer != nil && s.Kind != KindDatatype {
+		c.observer.OnSort(s)
+	}
 	return s
 }
 
@@ -151,6 +171,9 @@ func (c *Context) MkDatatypeSort(name string, cons []ConstructorSpec) *Sort {
 	}
 	c.sortOrder = append(c.sortOrder, s)
 	c.sortByName[name] = s
+	if c.observer != nil {
+		c.observer.OnSort(s)
+	}
 	return s
 }
 
@@ -172,6 +195,9 @@ func (c *Context) internDecl(d *FuncDecl) *FuncDecl {
 	c.declByName[d.Name] = append(c.declByName[d.Name], d)
 	if d.Kind == DeclUninterpreted {
 		c.declOrder = append(c.declOrder, d)
+		if c.observer != nil {
+			c.observer.OnDecl(d)
+		}
 	}
 	return d
 }
@@ -243,6 +269,9 @@ func (c *Context) intern(t *Term) *Term {
 	t.id = c.nextID
 	t.key = key
 	c.terms[key] = t
+	if c.observer != nil {
+		c.observer.OnTerm(t)
+	}
 	return t
 }
 
